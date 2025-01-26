@@ -24,7 +24,7 @@ export const BearPage = () => {
 
 export const BlackBears = () => {
   const blackBears = userBearStore((state) => state.blackBears);
-  const increaBlackBears = userBearStore((state) => state.increaeBlackBears);
+  const increaBlackBears = userBearStore((state) => state.increaseBlackBears);
   return (<WhiteCard centered>
     <h2>Osos Negros</h2>
     <div className="flex flex-col md:flex-row">
