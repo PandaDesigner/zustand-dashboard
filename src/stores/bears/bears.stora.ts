@@ -1,4 +1,6 @@
 import { create } from 'zustand';
+import { devtools, persist } from 'zustand/middleware';
+import { customFireBaseStora } from '../storages/firebase.storages';
 
 interface Bear {
     id: number;
@@ -11,15 +13,14 @@ interface BearStore {
     blackBears: number;
     polarBears: number;
     pandaBears: number;
-    computed: {
-        totalBears: number
-    };
+    totalBears: () => number;
+
 
 
     bears: Bear[];
 
 
-    increaeBlackBears: (by: number) => void;
+    increaseBlackBears: (by: number) => void;
     increasePolarBears: (by: number) => void;
     increasePandaBears: (by: number) => void;
     removeAllBears: () => void;
@@ -27,30 +28,39 @@ interface BearStore {
     clearBears: () => void;
 }
 
-export const userBearStore = create<BearStore>()((set, get) => ({
-    blackBears: 10,
-    polarBears: 5,
-    pandaBears: 1,
-    bears: [{ id: 1, name: 'Black Bear', type: 'blackBears' }, { id: 2, name: 'Polar Bear', type: 'polarBears' }, { id: 3, name: 'Panda Bear', type: 'pandaBears' }],
+export const userBearStore = create<BearStore>()(
 
-    computed: {
-        get totalBears() {
-            return get().blackBears + get().polarBears + get().pandaBears + get().bears.length
-        }
-    },
+    devtools(
+        persist(
+            (set, get) => ({
+                blackBears: 10,
+                polarBears: 5,
+                pandaBears: 1,
+                bears: [],
+                totalBears() {
+                    return get().blackBears + get().polarBears + get().pandaBears + get().bears.length
+                },
 
-    increaeBlackBears: (by: number) => set((states) => ({ blackBears: states.blackBears + by })),
-    increasePolarBears: (by: number) => set((states) => ({ polarBears: states.polarBears + by })),
-    increasePandaBears: (by: number) => set((states) => ({ pandaBears: states.pandaBears + by })),
-    removeAllBears: () => set({ blackBears: 0, polarBears: 0, pandaBears: 0 }),
-    addBear: () => {
-        const bear = typeBear[Math.floor(Math.random() * typeBear.length)];
-        const newBear = bear.split(' ');
-        set((state) => ({
-            bears: [
-                ...state.bears,
-                { id: state.bears.length + 1, name: 'New Bear ' + newBear[0], type: bear }]
-        }))
-    },
-    clearBears: () => set({ bears: [] })
-}))
+                increaseBlackBears: (by: number) => set((states) => ({ blackBears: states.blackBears + by }), false, 'blackBears'),
+                increasePolarBears: (by: number) => set((states) => ({ polarBears: states.polarBears + by }), false, 'polarBears'),
+                increasePandaBears: (by: number) => set((states) => ({ pandaBears: states.pandaBears + by }), false, 'pandaBears'),
+                removeAllBears: () => set({ blackBears: 0, polarBears: 0, pandaBears: 0 }),
+                addBear: () => {
+                    const bear = typeBear[Math.floor(Math.random() * typeBear.length)];
+                    const newBear = bear.split(' ');
+                    set((state) => ({
+                        bears: [
+                            ...state.bears,
+                            { id: state.bears.length + 1, name: 'New Bear ' + newBear[0], type: bear }]
+                    }))
+                },
+                clearBears: () => set({ bears: [] })
+            }),
+            {
+                name: 'bear-storage',
+                storage: customFireBaseStora
+            }
+        )
+    )
+
+)
