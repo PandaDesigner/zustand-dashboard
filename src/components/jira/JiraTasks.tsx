@@ -1,17 +1,39 @@
-import { IoCheckmarkCircleOutline, IoEllipsisHorizontalOutline } from 'react-icons/io5';
+import { IoAddOutline, IoCheckmarkCircleOutline } from 'react-icons/io5';
+
 import { Task, TaskStatus } from '../../interfaces';
 import { SingleTask } from './SigleTask';
 
+import classNames from 'classnames';
+import { useTasks } from '../../hooks/useTasks';
+
 interface Props {
   title: string;
-  value: TaskStatus;
   tasks: Task[];
+  statusTask: TaskStatus;
 }
 
 
-export const JiraTasks = ({ title, tasks }: Props) => {
+export const JiraTasks = ({ title, tasks, statusTask }: Props) => {
+
+  const {
+    handleDragOver,
+    handleLeave,
+    handleDrop,
+    isDraggingTaskId,
+    onDragOver,
+    handleAddTask } = useTasks({ statusTask });
+
+
+
   return (
-    <div className="!text-black relative flex flex-col rounded-[20px]  bg-white bg-clip-border shadow-3xl shadow-shadow-500  w-full !p-4 3xl:p-![18px]">
+    <div
+      onDragOver={handleDragOver}
+      onDragLeave={handleLeave}
+      onDrop={handleDrop}
+      className={classNames("!text-black relative flex flex-col rounded-[20px]  bg-white bg-clip-border shadow-3xl shadow-shadow-500  w-full !p-4 3xl:p-![18px] border-2 transition-all", {
+        'border-indigo-600 border-dotted duration-300': isDraggingTaskId,
+        'border-green-600 border-dotted drop-shadow-md': isDraggingTaskId && onDragOver
+      })}>
 
 
       {/* Task Header */}
@@ -28,19 +50,19 @@ export const JiraTasks = ({ title, tasks }: Props) => {
           <h4 className="ml-4 text-xl font-bold text-navy-700">{title}</h4>
         </div>
 
-        <button>
-          <IoEllipsisHorizontalOutline />
+        <button onClick={() => handleAddTask()}>
+          <IoAddOutline />
         </button>
 
       </div>
 
       {/* Task Items */}
-      <div className="h-full w-full">
+      <div className="h-full w-full ">
 
         {
           tasks.map((task) => {
             return (
-              <SingleTask key={task.id} task={task} />
+              <SingleTask key={task.id} task={task} css={classNames({ 'rounded-sm drop-shadow-md': isDraggingTaskId, 'text-gray-500': statusTask == 'done' })} />
             )
           })
         }
