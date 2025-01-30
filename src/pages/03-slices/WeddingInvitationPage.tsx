@@ -1,8 +1,21 @@
 import { WhiteCard } from '../../components';
+import { useWeddingBoundStore } from '../../stores/wedding';
 
 
 
 export const WeddingInvitationPage = () => {
+
+  const firstName = useWeddingBoundStore(state => state.firstName);
+  const lastName = useWeddingBoundStore(state => state.lastName);
+  const guestCount = useWeddingBoundStore(state => state.guestCount);
+
+  const setFirstName = useWeddingBoundStore(state => state.setFirstName);
+  const setLastName = useWeddingBoundStore(state => state.setLastName);
+  const setGuestCount = useWeddingBoundStore(state => state.setGuestCount);
+  const eventYYYYMMDD = useWeddingBoundStore(state => state.eventYYYYMMDD());
+  const eventHHMM = useWeddingBoundStore(state => state.eventHHMM());
+  const setDate = useWeddingBoundStore(state => state.setEventDate);
+
   return (
     <>
       <h1>Invitación de Boda</h1>
@@ -24,7 +37,9 @@ export const WeddingInvitationPage = () => {
                     type="text"
                     name="firstName"
                     id="firstName"
+                    value={firstName}
                     placeholder="Primer Nombre"
+                    onChange={(e) => setFirstName(e.target.value)}
                   />
                 </div>
               </div>
@@ -39,7 +54,9 @@ export const WeddingInvitationPage = () => {
                     type="text"
                     name="lastName"
                     id="lastName"
+                    value={lastName}
                     placeholder="Apellido"
+                    onChange={(e) => setLastName(e.target.value)}
                   />
                 </div>
               </div>
@@ -56,6 +73,8 @@ export const WeddingInvitationPage = () => {
                 id="guestNumber"
                 placeholder="5"
                 min="0"
+                value={guestCount}
+                onChange={(e) => setGuestCount(Number(e.target.value))}
                 className="w-full appearance-none rounded-md border border-[#e0e0e0] bg-white py-3 px-6 text-base font-medium text-[#6B7280] outline-none focus:border-[#6A64F1] focus:shadow-md"
               />
             </div>
@@ -72,6 +91,8 @@ export const WeddingInvitationPage = () => {
                     type="date"
                     name="eventDate"
                     id="eventDate"
+                    value={eventYYYYMMDD}
+                    onChange={(e) => setDate(e.target.value)}
                   />
                 </div>
               </div>
@@ -86,6 +107,7 @@ export const WeddingInvitationPage = () => {
                     type="time"
                     name="eventTime"
                     id="eventTime"
+                    value={eventHHMM}
                   />
                 </div>
               </div>
