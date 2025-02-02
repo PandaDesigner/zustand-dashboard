@@ -40,8 +40,7 @@ export const createDateBoundSlice: StateCreator<DateSlice> = (set, get) => ({
     }),
 
     setEventTime: (parcialTime: string) => set((state) => {
-        const hours = parseInt(parcialTime.split(':')[0]);
-        const minutes = parseInt(parcialTime.split(':')[1]);
+        const [hours, minutes] = parcialTime.split(':').map(Number)
 
         const newDate = new Date(state.eventDate)
         newDate.setHours(hours, minutes)
